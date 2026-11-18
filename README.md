@@ -2,14 +2,14 @@
 
 Edge Gestures daemon and overlay configuration plugin for [Atrium](https://github.com/1Jamie/Atrium) on Linux handhelds (ROG Ally, Steam Deck, Legion Go).
 
-Provides passive touchscreen edge-swipe detection to trigger on-screen keyboards (Steam OSK, Atrium native OSK, GNOME, KDE) and system actions without interfering with primary gamepad inputs.
+Provides passive touchscreen edge-swipe detection to trigger on-screen keyboards (Steam OSK via gamescope, GNOME OSK, KDE virtual keyboard) and system actions without interfering with primary gamepad inputs.
 
 ---
 
 ## Features
 
 - **Zero-Device IPC (No Seat Hijacking)**: Unlike virtual controller/keyboard emulators that steal Seat 1 in games like *Call of Duty: Black Ops 3*, `edge-gestures` emits triggers over lightweight IPC:
-  - **Atrium Unix Domain Socket**: Ping `$XDG_RUNTIME_DIR/atrium-edge-gestures.sock` to trigger Atrium's native `triggerOsk()`.
+  - **Atrium Unix Domain Socket**: Ping `$XDG_RUNTIME_DIR/atrium-edge-gestures.sock` to invoke Atrium's shell OSK handler (`shell.toggleOsk()`).
   - **Non-blocking Steam Pipe**: Writes `open steam://open/keyboard` directly to `~/.steam/steam.pipe` without spawning subprocesses or blocking if Steam exits.
   - **Desktop D-Bus Fallback**: Toggles GNOME and KDE virtual keyboards when running on the desktop.
 - **Dynamic On-The-Fly Reload (SIGHUP)**: Slider adjustments apply instantly to the running daemon without restarting the service or dropping touchscreen focus.
