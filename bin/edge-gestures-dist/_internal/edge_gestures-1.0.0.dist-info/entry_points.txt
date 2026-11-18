@@ -1,0 +1,3 @@
+[console_scripts]
+edge-gestures = edge_gestures.cli:main
+edge-gestures-gui = edge_gestures.gui:main

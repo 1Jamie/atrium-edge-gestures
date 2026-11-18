@@ -1,0 +1,412 @@
+/* Edge Gestures Atrium Plugin Stylesheet */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+:root {
+  --atrium-touch: 48px;
+  --accent-color: var(--atrium-accent, #2dd4bf);
+  --accent-soft: var(--atrium-accent-soft, rgba(45, 212, 191, 0.16));
+  --accent-border: var(--atrium-accent-border, rgba(45, 212, 191, 0.35));
+  --danger-color: var(--atrium-danger, #fb7185);
+  --danger-soft: rgba(251, 113, 133, 0.16);
+  --danger-border: rgba(251, 113, 133, 0.4);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: transparent !important;
+  color: var(--atrium-text, #f5fff9);
+  font-family: var(--atrium-font-sans, "Inter", system-ui, sans-serif);
+  font-size: var(--atrium-text-secondary, 15px);
+  overflow: hidden;
+}
+
+.panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  gap: 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Touch targets: Enforce 48px minimum height */
+.atrium-touch-target {
+  min-height: var(--atrium-touch, 48px);
+}
+
+/* Header */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--atrium-border-subtle, rgba(255, 255, 255, 0.1));
+  flex-shrink: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-icon {
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-title {
+  font-size: var(--atrium-text-body, 18px);
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
+
+.status-badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 650;
+  padding: 2px 10px;
+  border-radius: var(--atrium-radius-pill, 999px);
+  background: var(--atrium-bg-card, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--atrium-border-subtle, rgba(255, 255, 255, 0.12));
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+.status-dot.active {
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.6);
+}
+
+.status-dot.inactive {
+  background: #fbbf24;
+}
+
+.status-dot.missing {
+  background: #f87171;
+}
+
+.badge-dim {
+  color: var(--atrium-text-dim, #8fa39b);
+}
+
+/* Common Card Styles */
+.card {
+  background: var(--atrium-bg-card, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--atrium-border-subtle, rgba(255, 255, 255, 0.12));
+  border-radius: var(--atrium-radius, 10px);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--atrium-text, #f5fff9);
+}
+
+.card-desc {
+  font-size: 13px;
+  color: var(--atrium-text-dim, #8fa39b);
+  margin-top: 2px;
+}
+
+/* Service Actions Grid */
+.service-actions-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: var(--atrium-radius-sm, 8px);
+  border: 1px solid var(--atrium-border-subtle, rgba(255, 255, 255, 0.15));
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--atrium-text, #f5fff9);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-action {
+  flex: 1 1 120px;
+}
+
+.btn-primary {
+  background: var(--accent-soft);
+  color: var(--accent-color);
+  border-color: var(--accent-border);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-color);
+  color: #032014;
+}
+
+.btn-danger {
+  background: var(--danger-soft);
+  color: var(--danger-color);
+  border-color: var(--danger-border);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-color);
+  color: #2b020a;
+}
+
+.btn-danger.confirming {
+  background: var(--danger-color);
+  color: #ffffff;
+  border-color: #ff4d6d;
+  box-shadow: 0 0 12px rgba(255, 77, 109, 0.4);
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--atrium-border-subtle, rgba(255, 255, 255, 0.1));
+  padding-bottom: 8px;
+}
+
+.nav-tab {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--atrium-radius-sm, 8px);
+  color: var(--atrium-text-muted, #c5d4ce);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.nav-tab.active {
+  background: var(--accent-soft);
+  color: var(--accent-color);
+  border-color: var(--accent-border);
+}
+
+.tab-pane {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.tab-pane.active {
+  display: flex;
+}
+
+/* Setting Rows */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+}
+
+.label-title {
+  font-weight: 650;
+  font-size: 14px;
+}
+
+.label-desc {
+  font-size: 12px;
+  color: var(--atrium-text-dim, #8fa39b);
+}
+
+.form-select {
+  appearance: none;
+  background: var(--atrium-bg-recess, rgba(0, 0, 0, 0.35));
+  border: 1px solid var(--atrium-border-subtle, rgba(255, 255, 255, 0.15));
+  color: var(--atrium-text, #f5fff9);
+  padding: 0 14px;
+  border-radius: var(--atrium-radius-sm, 8px);
+  font: inherit;
+  font-size: 14px;
+  min-width: 240px;
+  cursor: pointer;
+}
+
+.range-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 240px;
+}
+
+.form-range {
+  flex: 1;
+  height: 6px;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  outline: none;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+}
+
+.range-value {
+  font-family: var(--atrium-font-mono, monospace);
+  font-weight: 700;
+  font-size: 13px;
+  min-width: 44px;
+  text-align: right;
+}
+
+/* Gesture items */
+.gesture-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--atrium-radius-sm, 8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gesture-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gesture-title {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.gesture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-label {
+  font-size: 12px;
+  color: var(--atrium-text-dim, #8fa39b);
+}
+
+.form-input {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--atrium-border-subtle, rgba(255, 255, 255, 0.15));
+  color: var(--atrium-text, #f5fff9);
+  padding: 0 12px;
+  border-radius: var(--atrium-radius-sm, 8px);
+  font: inherit;
+  font-size: 14px;
+}
+
+/* Canvas Visualizer */
+.canvas-wrapper {
+  margin-top: 8px;
+  border-radius: var(--atrium-radius-sm, 8px);
+  overflow: hidden;
+  border: 1px solid var(--atrium-border-subtle, rgba(255, 255, 255, 0.15));
+  background: #000;
+  display: flex;
+  justify-content: center;
+}
+
+canvas {
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  display: block;
+}
+
+/* Danger Card (Bottom Anchored) */
+.danger-card {
+  margin-top: auto;
+  border-color: var(--danger-border);
+  background: rgba(251, 113, 133, 0.04);
+}
+
+.danger-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.danger-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--danger-color);
+}
+
+.danger-desc {
+  font-size: 12px;
+  color: var(--atrium-text-dim, #8fa39b);
+}

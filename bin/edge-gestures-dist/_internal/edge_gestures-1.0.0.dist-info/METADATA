@@ -1,0 +1,187 @@
+Metadata-Version: 2.4
+Name: edge-gestures
+Version: 1.0.0
+Summary: Background edge gesture detection daemon for handheld Linux gaming devices (ROG Ally, Steam Deck)
+Author: Autumn
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: evdev>=1.6.0
+Requires-Dist: pyyaml>=6.0
+
+# Edge Gestures for Linux Handhelds
+
+A lightweight, reliable background service for Linux gaming handhelds (ASUS ROG Ally, ROG Ally X, Steam Deck, Lenovo Legion Go, AYANEO, GPD) running SteamOS, Bazzite, ChimeraOS, or desktop distributions.
+
+It passively monitors the touchscreen for edge gestures (such as swiping up from the bottom edge) and summons the Steam On-Screen Virtual Keyboard via controller chords (`Steam + X`), Steam URL (`steam://open/keyboard`), or custom keyboard shortcuts—working seamlessly both in **Game Mode** (Gamescope) and **Desktop Mode**.
+
+---
+
+## Features
+
+- **Game Mode & Desktop Mode Support**: Works inside Gamescope game sessions and standard Wayland/X11 desktop sessions.
+- **Passive Sniffing**: Does not intercept or grab the touch device—all existing taps, swipes, and in-game controls pass through uninterrupted.
+- **Smart Hardware Discovery**: Automatically detects multi-touch touchscreens across known handheld hardware (ROG Ally Novatek `NVTK0603`, Goodix, Elan, FocalTech, Steam Deck, etc.).
+- **Multiple Trigger Backends**:
+  - `auto` (Default): Automatically checks if Steam is running. In Game Mode or Desktop Mode with Steam open, it triggers the Steam Virtual Keyboard; if Steam is stopped, it gracefully falls back to the native desktop on-screen keyboard (GNOME/KDE).
+  - `steam_chord`: Emulates a persistent Steam controller pressing **`Steam / Guide + X`** via `/dev/uinput`.
+  - `steam_url`: Opens the virtual keyboard instantly using `steam steam://open/keyboard`.
+  - `desktop_osk`: Toggles the native desktop on-screen keyboard (e.g. GNOME OSK).
+  - `keyboard_chord`: Emulates physical keyboard combos (e.g., `Super + X` or `Ctrl + 1`).
+  - `command`: Triggers any custom script or shell command.
+- **Multi-Edge & Multi-Direction Support**: Configure gestures for bottom, top, left, or right edges with custom spans and direction.
+- **Auto-Reconnection**: Automatically detects system suspend/wake and reconnects to touch devices if re-initialized by the kernel.
+- **Interactive Visual Test Monitor**: Test touch coordinates, gesture bounding boxes, and swipe speeds in real time with visual feedback.
+
+---
+
+## Quick Start
+
+### 1. Test Without Installing
+
+To test device detection:
+```bash
+python3 -m edge_gestures devices
+```
+
+To run the interactive touch monitor (test your bottom swipe upward):
+```bash
+python3 -m edge_gestures test
+```
+
+To test triggering the Steam keyboard right now:
+```bash
+# Test controller chord (Steam + X)
+python3 -m edge_gestures trigger --action steam_chord
+
+# Test Steam URL protocol
+python3 -m edge_gestures trigger --action steam_url
+```
+
+---
+
+## Installation as a Background Service
+
+Because the service runs as a **systemd user service**, it automatically starts on login, persists seamlessly across Game Mode and Desktop Mode, and requires no root privileges (the user already has access to `/dev/uinput` and `/dev/input`).
+
+### Easy Install:
+```bash
+cd ~/src/edge-gestures
+./install.sh
+```
+
+Or via the Python CLI:
+```bash
+python3 -m edge_gestures install-service
+```
+
+### Check Service Status:
+```bash
+systemctl --user status edge-gestures.service
+```
+
+### View Live Logs:
+```bash
+journalctl --user -u edge-gestures.service -f
+```
+
+### Uninstall:
+```bash
+./uninstall.sh
+```
+or:
+```bash
+python3 -m edge_gestures uninstall-service
+```
+
+---
+
+## Configuration
+
+You can configure Edge Gestures graphically or by editing the YAML configuration file directly.
+
+### Graphical Configuration (GTK4 / Libadwaita)
+
+Launch the configuration app from your desktop application launcher (**"Edge Gestures"**) or via terminal:
+
+```bash
+python3 -m edge_gestures gui
+# or
+edge-gestures gui
+```
+
+The GUI allows you to:
+- Select touchscreen devices or use auto-detection.
+- Adjust global debounce cooldown.
+- Configure hotzone depths, swipe thresholds, and completion durations.
+- Choose edge trigger boundaries (bottom, top, left, right) and swipe directions.
+- Switch action backends (`auto`, `steam_chord`, `steam_url`, `desktop_osk`, `keyboard_chord`, `command`).
+- Click **"Save & Apply"** to write changes to `config.yaml` and seamlessly reload the background service.
+
+### Configuration File
+
+Configuration is stored in `~/.config/edge-gestures/config.yaml`. If it doesn't exist, the service will generate a default file on first run.
+
+```yaml
+device:
+  # Set to "auto" to detect the touchscreen automatically, or specify a path like "/dev/input/event5"
+  path: "auto"
+  name_filters:
+    - "touch"
+    - "goodix"
+    - "nvtk"       # ASUS ROG Ally Novatek controller
+    - "elan"
+    - "fts"
+
+# Minimum delay (seconds) between firing any gesture to prevent accidental double-swipes
+debounce_seconds: 0.6
+
+gestures:
+  # Swipe UP from bottom edge: Summon Steam Virtual Keyboard
+  - name: "bottom_open_keyboard"
+    enabled: true
+    edge: "bottom"            # Options: bottom, top, left, right
+    direction: "up"           # Options: up, down, left, right
+    edge_depth_px: 45         # Height of edge trigger zone from screen bottom (in pixels)
+    span_start_ratio: 0.20    # Start hotzone at 20% screen width (avoids left corner)
+    span_end_ratio: 0.80      # End hotzone at 80% screen width (avoids right corner)
+    swipe_threshold_px: 35    # Min upward travel distance required
+    max_deviation_px: 90      # Max allowed horizontal drift during upward swipe
+    max_duration: 0.35        # Gesture must be completed within 350ms
+    action:
+      type: "steam_chord"     # "steam_chord", "steam_url", "keyboard_chord", or "command"
+      chord: ["BTN_MODE", "BTN_X"]
+```
+
+---
+
+## CLI Reference
+
+```
+usage: edge-gestures [-h] [-v] {run,test,trigger,devices,install-service,uninstall-service,status} ...
+
+Edge Gestures background service for Linux handhelds (ROG Ally, Steam Deck)
+
+options:
+  -h, --help            Show this help message and exit
+  -v, --verbose         Enable verbose debug logging
+
+commands:
+  run                   Run the daemon loop in foreground or under systemd
+  test                  Interactive touch monitor showing live touches, coordinates, and gesture triggers
+  trigger               Manually test an action (steam_chord, steam_url, keyboard_chord)
+  devices               List input devices and identify touchscreens
+  install-service       Install and enable systemd user service
+  uninstall-service     Stop and remove systemd user service
+  status                Check systemd service status
+```
+
+---
+
+## How It Works
+
+1. **Kernel Input Sniffing**: Uses Linux `evdev` to read the multi-touch Type B protocol (`ABS_MT_SLOT`, `ABS_MT_TRACKING_ID`, `ABS_MT_POSITION_X`, `ABS_MT_POSITION_Y`) directly from the touchscreen event node.
+2. **Gesture Recognition**:
+   - When a finger touches down inside the hotzone, the initial `(start_x, start_y)` position and timestamp are recorded.
+   - When the finger drags upward past the threshold within the configured time limit and perpendicular tolerance, a gesture match is confirmed.
+3. **Steam Triggering**:
+   - Steam listens for controller chords on connected gamepads. The `steam_chord` trigger maintains a virtual gamepad (`/dev/uinput`) with Valve vendor ID (`0x28DE`), pressing Guide (`BTN_MODE`) + X (`BTN_X`), causing Steam's Game Mode compositor to summon the on-screen keyboard instantly.

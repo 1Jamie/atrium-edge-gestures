@@ -1,0 +1,9 @@
+{
+  "name": "atrium-edge-gestures",
+  "version": "1.0.0",
+  "description": "Atrium plugin for Edge Gestures daemon on handheld Linux devices",
+  "main": "host.js",
+  "dependencies": {
+    "yaml": "^2.6.0"
+  }
+}

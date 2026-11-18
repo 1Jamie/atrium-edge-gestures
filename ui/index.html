@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edge Gestures</title>
+  <link rel="stylesheet" href="lotus-resource://localhost/ui/theme.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="panel">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="app-icon">✋</span>
+        <div class="header-titles">
+          <h1 class="app-title">Edge Gestures</h1>
+          <div class="status-badges">
+            <span class="badge" id="service-status-badge">
+              <span class="status-dot"></span>
+              <span id="service-status-text">Checking...</span>
+            </span>
+            <span class="badge badge-dim" id="autostart-status-badge">Autostart: —</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-save" class="btn btn-primary atrium-touch-target" title="Save and apply configuration via SIGHUP">
+          <span class="btn-icon">💾</span> Save &amp; Apply
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-body">
+      <!-- Section 1: Service Lifecycle Card -->
+      <section class="card service-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Background Service</h2>
+            <p class="card-desc" id="service-details-text">Detects touch gestures on the screen edge to summon the on-screen keyboard.</p>
+          </div>
+        </div>
+        <div class="service-actions-grid">
+          <button id="btn-start" class="btn btn-action atrium-touch-target" disabled>
+            <span class="btn-icon">▶</span> Start
+          </button>
+          <button id="btn-stop" class="btn btn-action atrium-touch-target" disabled>
+            <span class="btn-icon">⏹</span> Stop
+          </button>
+          <button id="btn-restart" class="btn btn-action atrium-touch-target" disabled>
+            <span class="btn-icon">⟳</span> Restart
+          </button>
+          <button id="btn-autostart" class="btn btn-action atrium-touch-target" disabled>
+            <span class="btn-icon">⚙</span> Enable Autostart
+          </button>
+          <button id="btn-install" class="btn btn-primary atrium-touch-target" style="display: none;">
+            <span class="btn-icon">📦</span> Install Service
+          </button>
+        </div>
+      </section>
+
+      <!-- Section 2: Configuration Tabs -->
+      <section class="card config-card">
+        <nav class="nav-tabs">
+          <button class="nav-tab active atrium-touch-target" data-tab="tab-gestures">Gestures</button>
+          <button class="nav-tab atrium-touch-target" data-tab="tab-general">Hardware &amp; Devices</button>
+          <button class="nav-tab atrium-touch-target" data-tab="tab-visualizer">Hotzone Preview</button>
+        </nav>
+
+        <!-- Tab 1: Gestures -->
+        <div id="tab-gestures" class="tab-pane active">
+          <div id="gestures-list" class="gestures-container">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Tab 2: General & Hardware Settings -->
+        <div id="tab-general" class="tab-pane">
+          <div class="setting-row">
+            <div class="setting-label">
+              <span class="label-title">Touchscreen Input Device</span>
+              <span class="label-desc">Hardware touchscreen device monitored for edge swipes.</span>
+            </div>
+            <div class="setting-control">
+              <select id="cfg-device-select" class="form-select atrium-touch-target">
+                <option value="auto">Auto-detect Touchscreen (Recommended)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <span class="label-title">Global Debounce Delay</span>
+              <span class="label-desc">Cooldown between gesture activations to prevent accidental double-swipes.</span>
+            </div>
+            <div class="setting-control range-control">
+              <input type="range" id="cfg-debounce" class="form-range" min="0.2" max="2.0" step="0.1" value="0.6">
+              <span id="cfg-debounce-val" class="range-value">0.6s</span>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              <span class="label-title">OSK Trigger Protocol</span>
+              <span class="label-desc">Method used to summon the virtual keyboard without fake gamepad conflicts.</span>
+            </div>
+            <div class="setting-control">
+              <select id="cfg-trigger-type" class="form-select atrium-touch-target">
+                <option value="auto">Auto (Atrium Socket / Steam Pipe / D-Bus)</option>
+                <option value="steam_url">Steam URL / Steam Pipe Only</option>
+                <option value="desktop_osk">Desktop OSK (GNOME / KDE D-Bus)</option>
+                <option value="command">Custom Shell Command</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Hotzone Visualizer -->
+        <div id="tab-visualizer" class="tab-pane">
+          <div class="visualizer-container">
+            <p class="section-desc">Live representation of trigger zones based on your screen resolution and threshold depths.</p>
+            <div class="canvas-wrapper">
+              <canvas id="hotzone-canvas" width="640" height="360"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Danger Zone (Anchored at Pane Bottom) -->
+      <section class="card danger-card">
+        <div class="danger-header">
+          <div>
+            <h3 class="danger-title">Danger Zone</h3>
+            <p class="danger-desc">Stop daemon and delete the systemd user service unit file.</p>
+          </div>
+          <button id="btn-uninstall" class="btn btn-danger atrium-touch-target" disabled>
+            <span class="btn-icon">🗑</span> Uninstall Service
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
